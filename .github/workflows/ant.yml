@@ -21,5 +21,5 @@ jobs:
         distribution: 'temurin'
     - name: Build
       run: |
-          mkdir out\classes
-          javac -d out\classes src\Kalkulator\Kalkulator.java
+          mkdir out/classes
+          javac -d out/classes src/Kalkulator/Kalkulator.java
