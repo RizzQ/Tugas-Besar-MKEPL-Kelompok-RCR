@@ -24,9 +24,9 @@ jobs:
           mkdir --parents out/classes
           javac -d out/classes src/Kalkulator/Kalkulator.java
     - name: Testing
-      run: mvn tests
+      run: ant tests
     - name: Inspection
-      run: mvn -DskipTests verify
+      run: ant checkstyle
     - name: Delivery
       run: |
           mkdir --parents out/dist
