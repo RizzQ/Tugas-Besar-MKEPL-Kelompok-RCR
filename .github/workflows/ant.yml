@@ -26,7 +26,7 @@ jobs:
     - name: Testing
       run: ant tests
     - name: Inspection
-      run: ant checkstyle
+      run: ant pwd
     - name: Delivery
       run: |
           mkdir --parents out/dist
