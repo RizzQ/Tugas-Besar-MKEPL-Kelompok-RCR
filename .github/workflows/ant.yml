@@ -21,7 +21,7 @@ jobs:
         distribution: 'temurin'
     - name: Build
       run: |
-          mkdir --parents out\classes
+          mkdir out\classes
           javac -d out\classes src\Kalkulator\Kalkulator.java
     - name: Testing
       run: ant tests
@@ -29,7 +29,7 @@ jobs:
       run: ant checkstyle
     - name: Delivery
       run: |
-          mkdir --parents out\dist
+          mkdir out\dist
           javac -d out\classes src\Kalkulator\Kalkulator.java
           jar cfe out\Kalkulator.jar Kalkulator.Kalkulator -C out\classes .
           jpackage --input out --name KalkulatorGUI --main-jar Kalkulator.jar --main-class Kalkulator.Kalkulator --type exe --dest dist --app-version 1.0 --vendor MKEPL
