@@ -1,0 +1,54 @@
+<project name="KalkulatorGUI" default="compile" basedir=".">
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="dist.dir" value="dist"/>
+
+    <target name="init">
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+    </target>
+
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false"/>
+        <echo message="Compile completed successfully."/>
+    </target>
+
+    <target name="tests" depends="compile">
+        <echo message="Ant test target executed successfully."/>
+        <echo message="No automated JUnit tests are configured yet; compile validation passed."/>
+    </target>
+
+    <target name="inspect" depends="compile">
+        <echo message="Inspection target executed. Add Checkstyle/PMD here if needed."/>
+    </target>
+
+    <target name="package-exe" depends="compile">
+        <jar destfile="${dist.dir}/Kalkulator.jar" basedir="${classes.dir}"/>
+        <echo message="Packaging executable with jpackage..."/>
+        <exec executable="jpackage" failonerror="true">
+            <arg value="--input"/>
+            <arg value="${dist.dir}"/>
+            <arg value="--name"/>
+            <arg value="KalkulatorGUI"/>
+            <arg value="--main-jar"/>
+            <arg value="Kalkulator.jar"/>
+            <arg value="--main-class"/>
+            <arg value="Kalkulator.Kalkulator"/>
+            <arg value="--type"/>
+            <arg value="exe"/>
+            <arg value="--dest"/>
+            <arg value="${dist.dir}"/>
+            <arg value="--app-version"/>
+            <arg value="1.0"/>
+            <arg value="--vendor"/>
+            <arg value="MKEPL"/>
+        </exec>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+        <echo message="Build directories cleaned."/>
+    </target>
+</project>
