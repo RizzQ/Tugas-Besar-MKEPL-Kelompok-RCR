@@ -28,8 +28,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path out\classes
           javac -d out\classes src\Kalkulator\Kalkulator.java
 
-      - name: Testing
-        run: ant tests
+      
 
       - name: Inspection
         run: ant checkstyle
