@@ -1,5 +1,4 @@
 # This workflow will build a Java project with Ant
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-ant
 # Testing Deployment
 
 name: Java CI
@@ -12,31 +11,38 @@ on:
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-    - name: Build
-      run: |
-          mkdir out\classes
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build
+        run: |
+          New-Item -ItemType Directory -Force -Path out\classes
           javac -d out\classes src\Kalkulator\Kalkulator.java
-    - name: Testing
-      run: ant tests
-    - name: Inspection
-      run: ant checkstyle
-    - name: Delivery
-      run: |
-          mkdir out\dist
+
+      - name: Testing
+        run: ant tests
+
+      - name: Inspection
+        run: ant checkstyle
+
+      - name: Delivery
+        run: |
+          New-Item -ItemType Directory -Force -Path out\dist
           javac -d out\classes src\Kalkulator\Kalkulator.java
           jar cfe out\Kalkulator.jar Kalkulator.Kalkulator -C out\classes .
-          jpackage --input out --name KalkulatorGUI --main-jar Kalkulator.jar --main-class Kalkulator.Kalkulator --type exe --dest dist --app-version 1.0 --vendor MKEPL
-          
+          jpackage --input out --dest out\dist --name KalkulatorGUI --main-jar Kalkulator.jar --main-class Kalkulator.Kalkulator --type exe --app-version 1.0 --vendor MKEPL
+
       - name: Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: KalkulatorGUI-exe
-        path: dist/
+        uses: actions/upload-artifact@v4
+        with:
+          name: KalkulatorGUI-exe
+          path: out/dist/
