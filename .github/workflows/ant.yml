@@ -28,9 +28,11 @@ jobs:
       run: ant tests
     - name: Inspection
       run: ant checkstyle
-    
-    - name: Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: KalkulatorGUI-exe
-        path: dist/
+
+     - name: Delivery
+      run: |
+          mkdir out\dist
+          javac -d out\classes src\Kalkulator\Kalkulator.java
+          jar cfe out\Kalkulator.jar Kalkulator.Kalkulator -C out\classes .
+          jpackage --input out --name KalkulatorGUI --main-jar Kalkulator.jar --main-class Kalkulator.Kalkulator --type exe --dest dist --app-version 1.0 --vendor MKEPL
+  
