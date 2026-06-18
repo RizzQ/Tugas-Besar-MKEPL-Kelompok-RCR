@@ -24,16 +24,24 @@ jobs:
           distribution: 'temurin'
 
       - name: Build
-        run: |
-          New-Item -ItemType Directory -Force -Path out\classes
-          javac -d out\classes src\Kalkulator\Kalkulator.java
-       
+        run: ant compile
+
       - name: Testing
         run: ant tests
-      
 
       - name: Inspection
         run: ant checkstyle
+
+      - name: SonarQube Analysis
+        uses: sonarsource/sonarcloud-github-action@v1
+        with:
+          args: >
+            -Dsonar.projectKey=Tugas-Besar-MKEPL-Kelompok-RCR
+            -Dsonar.projectName=KalkulatorGUI
+            -Dsonar.sources=src
+            -Dsonar.java.binaries=build/classes
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
       - name: Delivery
         run: |

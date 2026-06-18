@@ -15,8 +15,9 @@
     </target>
 
     <target name="tests" depends="compile">
-        <echo message="Ant test target executed successfully."/>
-        <echo message="No automated JUnit tests are configured yet; compile validation passed."/>
+        <echo message="Running CalculatorLogic tests..."/>
+        <java classname="Kalkulator.CalculatorLogicTest" fork="true" classpath="${classes.dir}" failonerror="true"/>
+        <echo message="CalculatorLogic tests passed successfully."/>
     </target>
 
     <target name="inspect" depends="compile">
