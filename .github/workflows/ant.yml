@@ -5,9 +5,10 @@ name: Java CI
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "main" ]
+    tags: [ "v*" ]
   pull_request:
-    branches: [ "dev" ]
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -32,17 +33,6 @@ jobs:
       - name: Inspection
         run: ant checkstyle
 
-      - name: SonarQube Analysis
-        uses: sonarsource/sonarcloud-github-action@v1
-        with:
-          args: >
-            -Dsonar.projectKey=Tugas-Besar-MKEPL-Kelompok-RCR
-            -Dsonar.projectName=KalkulatorGUI
-            -Dsonar.sources=src
-            -Dsonar.java.binaries=build/classes
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
       - name: Delivery
         run: |
           New-Item -ItemType Directory -Force -Path out\dist
@@ -55,3 +45,32 @@ jobs:
         with:
           name: KalkulatorGUI-exe
           path: out/dist/
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: KalkulatorGUI-exe
+          path: release-artifact
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          asset_path: release-artifact/out/dist/KalkulatorGUI.exe
+          asset_name: KalkulatorGUI.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
