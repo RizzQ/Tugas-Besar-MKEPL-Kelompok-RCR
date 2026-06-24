@@ -5,10 +5,10 @@ name: Java CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "dev", "dev_*" ]
     tags: [ "v*" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "dev", "dev_*" ]
 
 jobs:
   build:
