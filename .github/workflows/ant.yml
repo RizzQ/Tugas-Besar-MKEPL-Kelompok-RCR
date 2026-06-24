@@ -6,7 +6,6 @@ name: Java CI
 on:
   push:
     branches: [ "main", "dev", "dev_*" ]
-    tags: [ "v*" ]
   pull_request:
     branches: [ "main", "dev", "dev_*" ]
 
@@ -47,7 +46,7 @@ jobs:
           path: out/dist/
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -57,19 +56,33 @@ jobs:
           name: KalkulatorGUI-exe
           path: release-artifact
 
+      - name: Find executable file
+        shell: bash
+        run: |
+          echo "Searching for .exe file"
+          find release-artifact -type f -name '*.exe' | sort
+          exe_path=$(find release-artifact -type f -name '*.exe' | head -n 1)
+          if [ -z "$exe_path" ]; then
+            echo "No .exe file found"
+            exit 1
+          fi
+          echo "exe_path=$exe_path" >> "$GITHUB_ENV"
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
+          tag_name: main-build-${{ github.run_number }}
+          name: Release main-build-${{ github.run_number }}
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload release asset
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.ref_name }}
-          asset_path: release-artifact/out/dist/KalkulatorGUI.exe
+          tag_name: main-build-${{ github.run_number }}
+          asset_path: ${{ env.exe_path }}
           asset_name: KalkulatorGUI.exe
           asset_content_type: application/vnd.microsoft.portable-executable
         env:
