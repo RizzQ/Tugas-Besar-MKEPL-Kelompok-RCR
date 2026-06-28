@@ -1,0 +1,34 @@
+# This workflow will build a Java project with Ant
+# Testing Deployment
+
+name: Continuous Testing
+
+on:
+  push:
+    branches: [ "main", "dev", "dev_*" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main", "dev", "dev_*"  ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Testing
+        run: ant tests
+      - name: JUnit Test Report
+        uses: ant -f build.xml tests
