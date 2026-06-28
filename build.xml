@@ -10,7 +10,9 @@
     </target>
 
     <target name="compile" depends="init">
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false">
+            <exclude name="**/*Test.java"/>
+        </javac>
         <echo message="Compile completed successfully."/>
     </target>
 
@@ -20,12 +22,22 @@
         <pathelement location="${classes.dir}"/>
     </path>
 
-    <target name="tests" depends="compile">
+    <target name="junit-setup">
         <mkdir dir="lib"/>
         <get src="https://repo1.maven.org/maven2/junit/junit/4.13.2/junit-4.13.2.jar" dest="lib/junit-4.13.2.jar" verbose="false"/>
         <get src="https://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar" dest="lib/hamcrest-core-1.3.jar" verbose="false"/>
+    </target>
+
+    <target name="test-compile" depends="compile,junit-setup">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" includeantruntime="false" classpathref="junit.classpath">
+            <include name="**/*Test.java"/>
+        </javac>
+    </target>
+
+    <target name="tests" depends="test-compile">
         <echo message="Running JUnit tests..."/>
-        <java classname="org.junit.runner.JUnitCore" fork="true" classpathref="junit.classpath" failonerror="true">
+        <java classname="org.junit.runner.JUnitCore" fork="true" failonerror="true">
+            <classpath refid="junit.classpath"/>
             <arg value="Kalkulator.CalculatorLogicJUnitTest"/>
         </java>
         <echo message="JUnit tests passed successfully."/>
